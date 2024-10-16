@@ -1,99 +1,85 @@
 import pygame
 import sys
-import collections
-import math
+from edit_button import Edit_Button
+from node import *
+from constants import *
+from tree_operations import *
 
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 800
-PADDING = 100
-NODE_SIZE, NODE_WIDTH = 30, 4
+class Visualizer:
+    def __init__(self, root):
+        self.root = root
+        self.height = tree_height(root)
+        self.node_size = NODE_SIZE
+        self.outline_width = NODE_BORDER_WIDTH
+        self.outline_color = BLACK
+        self.font_size = FONT_SIZE
+        self.edit_mode = False
 
-nodes = [i for i in range(16)]
-N = len(nodes)
-HEIGHT = math.floor(math.log2(N)) + 1
-
-# FORMULA FOR FINDING HEIGHTS
-heights = [(2 * i - 1) / (2 * HEIGHT) * SCREEN_HEIGHT for i in range(1, HEIGHT + 1)]
-
-# FORMULA FOR FINDING WIDTHS
-widths = [((2 * i - 1) * SCREEN_WIDTH) / 2 ** HEIGHT for i in range(1, 2**(HEIGHT-1) + 1)] 
-
-# BFS of array of nodes
-q = collections.deque()
-q.append(nodes[0])
-node_coordinates = []
-
-# Tracking each layer of binary tree
-tree_level = 0 
-
-while q:
-    tree_level += 1
-    
-    # Using for drawing line between nodes
-    previous_coordinate = set()
-    
-    # Height Coordinate (Calculated using 'heights' formula)
-    hc = heights[tree_level-1]
-    
-    # Each width coordinates based on formula using tree level
-    widths = [((2 * i - 1) * SCREEN_WIDTH) / 2 ** tree_level for i in range(1, 2**(tree_level-1) + 1)]
-    
-    for i in range(len(q)):
-        node = q.popleft()
+        # Initialize Pygame and setup screen and font
+        pygame.init()
+        self.font = pygame.font.SysFont('monaco', self.font_size)
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Binary Tree Visualizer")
+        self.running = True
         
-        # Width Coordinate
-        wc = widths[i]
-        
-        # Adding coordinate to coordinate set
-        node_coordinates.append((wc, hc))
-        
-        # Getting children of node and appending to queue
-        left_child = 2 * node + 1
-        right_child = 2 * node + 2
-        if left_child < N:
-            q.append(left_child)
-        if right_child < N:
-            q.append(right_child)
+        self.edit_button = Edit_Button(SCREEN_WIDTH - PADDING - 150, PADDING, 150, 80, "EDIT", self.font)
 
 
-pygame.init()
-font = pygame.font.Font(None, 36)
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Binary Tree Visualizer")
+    def draw_vertices(self, node):
+        coordinate = node.coordinate
+        if node.left and node.left.val:
+            child_coordinate = node.left.coordinate
+            pygame.draw.line(self.screen, self.outline_color, child_coordinate, coordinate, self.outline_width)
+            self.draw_vertices(node.left)
+        if node.right and node.right.val:
+            child_coordinate = node.right.coordinate
+            pygame.draw.line(self.screen, self.outline_color, child_coordinate, coordinate, self.outline_width)
+            self.draw_vertices(node.right)
+ 
 
-running = True
-while running:
-    # Handle events
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            sys.exit()
+    def draw_nodes(self, node):
+        if node:
+            node_visualizer = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
+            node_visualizer.draw(self.screen)
+            self.draw_nodes(node.left)
+            self.draw_nodes(node.right)
 
-    # BACKGROUND COLOR
-    screen.fill((200, 220, 250))
-                
-    
-    # Drawing the lines in between nodes. Must be drawn first so they are behind the nodes
-    for idx in range(len(node_coordinates)):
-        coordinate = node_coordinates[idx]
-        parent_coordinate = node_coordinates[(idx - 1) // 2]
-        
-        if idx > 0:
-            pygame.draw.line(screen, (0, 0, 0), parent_coordinate, coordinate, NODE_WIDTH)
-        
-        
-    # Drawing each node    
-    for idx in range(len(node_coordinates)):
-        coordinate = node_coordinates[idx]
-        parent_coordinate = node_coordinates[(idx - 1) // 2]
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                pygame.quit()
+                sys.exit()
             
-        pygame.draw.circle(screen, (255, 255, 255), coordinate, NODE_SIZE)
-        pygame.draw.circle(screen, (0, 0, 0), coordinate, NODE_SIZE, NODE_WIDTH)
-        text_surface = font.render(str(nodes[idx]), True, (0, 0, 0))
-        text_rect = text_surface.get_rect(center=coordinate)
-        screen.blit(text_surface, text_rect)
+            if self.edit_button.is_clicked(event):
+                self.edit_mode = not self.edit_mode
+            
+                self.outline_color = GREEN if self.edit_mode else BLACK
+    
 
 
-    # Update the display
-    pygame.display.flip()
-pygame.quit()
+    def run(self):
+        """ Main loop to run the visualization """
+        while self.running:
+            self.handle_events()
+                        
+            self.screen.fill(BACKGROUND_COLOR)
+
+            self.edit_button.draw(self.screen, self.outline_color)
+            self.draw_vertices(self.root)
+            self.draw_nodes(self.root)
+
+            pygame.display.flip()
+
+def main():
+    root = setup_nodes()
+
+    generate_coordinates(root)
+
+    visualizer = Visualizer(root)
+    visualizer.run()
+
+if __name__ == "__main__":
+    main()
