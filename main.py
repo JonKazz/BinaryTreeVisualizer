@@ -16,9 +16,8 @@ class Visualizer:
         self.font_size = FONT_SIZE
         self.edit_mode = False
 
-        # Initialize Pygame and setup screen and font
         pygame.init()
-        self.font = pygame.font.SysFont('monaco', self.font_size)
+        self.font = pygame.font.SysFont('arial', self.font_size)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Binary Tree Visualizer")
         self.running = True
@@ -26,25 +25,33 @@ class Visualizer:
         self.edit_button = Edit_Button(SCREEN_WIDTH - PADDING - 150, PADDING, 150, 80, "EDIT", self.font)
 
 
-    def draw_vertices(self, node):
-        coordinate = node.coordinate
-        if node.left and node.left.val:
-            child_coordinate = node.left.coordinate
-            pygame.draw.line(self.screen, self.outline_color, child_coordinate, coordinate, self.outline_width)
-            self.draw_vertices(node.left)
-        if node.right and node.right.val:
-            child_coordinate = node.right.coordinate
-            pygame.draw.line(self.screen, self.outline_color, child_coordinate, coordinate, self.outline_width)
-            self.draw_vertices(node.right)
- 
+    def draw_edges(self, parent):
+        def draw_single_edge(child):
+            if child and (self.edit_mode or not child.is_empty):
+                pygame.draw.line(self.screen, self.outline_color, child.coordinate, parent.coordinate, self.outline_width)
+                self.draw_edges(child)
+        draw_single_edge(parent.left)
+        draw_single_edge(parent.right)
+        
 
     def draw_nodes(self, node):
         if node:
-            node_visualizer = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
-            node_visualizer.draw(self.screen)
+            drawn_node = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
+            drawn_node.draw(self.screen)
             self.draw_nodes(node.left)
             self.draw_nodes(node.right)
 
+    def check_node_click(self, node, mouse_pos):
+        if node:
+            drawn_node = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
+            if drawn_node.is_mouse_over_node(mouse_pos):
+                node.val = 5
+                node.is_empty = False
+                node.left = Node(None)
+                node.right = Node(None)
+                generate_coordinates(self.root)
+            self.check_node_click(node.left, mouse_pos)
+            self.check_node_click(node.right, mouse_pos)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -53,10 +60,15 @@ class Visualizer:
                 pygame.quit()
                 sys.exit()
             
-            if self.edit_button.is_clicked(event):
-                self.edit_mode = not self.edit_mode
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if self.edit_button.is_mouse_over_button(mouse_pos):
+                    self.edit_mode = not self.edit_mode
+                    self.outline_color = GREEN if self.edit_mode else BLACK
+                self.check_node_click(self.root, mouse_pos)
+                
             
-                self.outline_color = GREEN if self.edit_mode else BLACK
+             
     
 
 
@@ -68,14 +80,13 @@ class Visualizer:
             self.screen.fill(BACKGROUND_COLOR)
 
             self.edit_button.draw(self.screen, self.outline_color)
-            self.draw_vertices(self.root)
+            self.draw_edges(self.root)
             self.draw_nodes(self.root)
 
             pygame.display.flip()
 
 def main():
     root = setup_nodes()
-
     generate_coordinates(root)
 
     visualizer = Visualizer(root)

@@ -7,13 +7,11 @@ class Edit_Button:
         self.text = text
         self.font = font
         self.default_color = WHITE
-        self.hover_color = LIGHT_GRAY
-
-
+        self.hover_color = SHADED_WHITE
 
     def draw(self, screen, outline_color):
         mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
+        if self.is_mouse_over_button(mouse_pos):
             button_color = self.hover_color
         else:
             button_color = self.default_color
@@ -26,9 +24,5 @@ class Edit_Button:
         screen.blit(text_surface, text_rect)
 
 
-    def is_clicked(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            if self.rect.collidepoint(mouse_pos):
-                return True
-        return False
+    def is_mouse_over_button(self, mouse_pos):
+        return self.rect.collidepoint(mouse_pos)
