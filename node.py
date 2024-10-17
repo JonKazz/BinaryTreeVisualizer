@@ -9,7 +9,14 @@ class Node:
         self.left = None
         self.right = None
         self.coordinate = None
-        self.is_empty = False if val else True
+        self.is_empty = True if val is None else False
+        
+    def fill(self, val):
+        self.val = val
+        self.is_empty = False
+        self.left = Node(None)
+        self.right = Node(None)
+    
 
 
 class NodeVisualizer:
@@ -27,14 +34,7 @@ class NodeVisualizer:
     def is_mouse_over_node(self, mouse_pos):
         distance = math.sqrt((mouse_pos[0] - self.node.coordinate[0]) ** 2 + (mouse_pos[1] - self.node.coordinate[1]) ** 2)
         return distance <= self.size
-
     
-    def is_clicked(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            if self.is_mouse_over_node(mouse_pos):
-                return self.node
-        return False
 
     def draw(self, screen):
         mouse_pos = pygame.mouse.get_pos()

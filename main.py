@@ -9,15 +9,13 @@ from tree_operations import *
 class Visualizer:
     def __init__(self, root):
         self.root = root
-        self.height = tree_height(root)
         self.node_size = NODE_SIZE
         self.outline_width = NODE_BORDER_WIDTH
         self.outline_color = BLACK
-        self.font_size = FONT_SIZE
         self.edit_mode = False
 
         pygame.init()
-        self.font = pygame.font.SysFont('arial', self.font_size)
+        self.font = pygame.font.SysFont('arial', FONT_SIZE)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Binary Tree Visualizer")
         self.running = True
@@ -41,17 +39,18 @@ class Visualizer:
             self.draw_nodes(node.left)
             self.draw_nodes(node.right)
 
+
     def check_node_click(self, node, mouse_pos):
-        if node:
-            drawn_node = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
-            if drawn_node.is_mouse_over_node(mouse_pos):
-                node.val = 5
-                node.is_empty = False
-                node.left = Node(None)
-                node.right = Node(None)
-                generate_coordinates(self.root)
+        drawn_node = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
+        if drawn_node.is_mouse_over_node(mouse_pos):
+            node.fill(1)
+            generate_coordinates(node)
+        
+        if node.left:
             self.check_node_click(node.left, mouse_pos)
+        if node.right:
             self.check_node_click(node.right, mouse_pos)
+
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -73,7 +72,6 @@ class Visualizer:
 
 
     def run(self):
-        """ Main loop to run the visualization """
         while self.running:
             self.handle_events()
                         
