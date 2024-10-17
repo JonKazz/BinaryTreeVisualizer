@@ -9,7 +9,6 @@ from tree_operations import *
 class Visualizer:
     def __init__(self, root):
         self.root = root
-        self.node_size = NODE_SIZE
         self.outline_width = NODE_BORDER_WIDTH
         self.outline_color = BLACK
         self.edit_mode = False
@@ -20,7 +19,7 @@ class Visualizer:
         pygame.display.set_caption("Binary Tree Visualizer")
         self.running = True
         
-        self.edit_button = Edit_Button(SCREEN_WIDTH - PADDING - 150, PADDING, 150, 80, "EDIT", self.font)
+        self.edit_button = Edit_Button(self.font)
 
 
     def draw_edges(self, parent):
@@ -33,24 +32,14 @@ class Visualizer:
         
 
     def draw_nodes(self, node):
-        if node:
-            drawn_node = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
-            drawn_node.draw(self.screen)
-            self.draw_nodes(node.left)
-            self.draw_nodes(node.right)
-
-
-    def check_node_click(self, node, mouse_pos):
-        drawn_node = NodeVisualizer(node, self.font, self.node_size, self.outline_width, self.outline_color, self.edit_mode)
-        if drawn_node.is_mouse_over_node(mouse_pos):
-            node.fill(1)
-            generate_coordinates(node)
+        drawn_node = NodeVisualizer(node, self.font, self.outline_width, self.outline_color, self.edit_mode)
+        drawn_node.draw(self.screen)
         
         if node.left:
-            self.check_node_click(node.left, mouse_pos)
-        if node.right:
-            self.check_node_click(node.right, mouse_pos)
-
+            self.draw_nodes(node.left)
+        if node.right:    
+            self.draw_nodes(node.right)
+            
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -61,11 +50,14 @@ class Visualizer:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if self.edit_button.is_mouse_over_button(mouse_pos):
+                if self.edit_button.is_hovered(mouse_pos):
                     self.edit_mode = not self.edit_mode
                     self.outline_color = GREEN if self.edit_mode else BLACK
-                self.check_node_click(self.root, mouse_pos)
                 
+                clicked_node = NodeVisualizer(self.root, self.font, self.outline_width, self.outline_color, self.edit_mode).find_clicked_node(mouse_pos)
+                if clicked_node is not None:
+                    clicked_node.fill(1)
+                    generate_coordinates(clicked_node)                
             
              
     
@@ -85,7 +77,6 @@ class Visualizer:
 
 def main():
     root = setup_nodes()
-    generate_coordinates(root)
 
     visualizer = Visualizer(root)
     visualizer.run()

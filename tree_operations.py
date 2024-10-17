@@ -43,11 +43,11 @@ def count_nodes(node: Node) -> int:
             
     
 def setup_nodes() -> Node:
-    root = Node(1)
+    root = Node(None)
     root.coordinate = (600, 80)
+    root.fill(1)
+    generate_coordinates(root)
     
-    root.left = Node(None)
-    root.right = Node(None)
     return root
    
 
