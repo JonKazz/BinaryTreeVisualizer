@@ -1,6 +1,8 @@
+import pygame
 from constants import *
 from ui.edit_button import Edit_Button
 from ui.node_edit_box import Node_Edit_Button
+from ui.node_visualization import NodeVisualizer
 from nodes.node_operations import *
 
 class UIManager:
@@ -16,7 +18,6 @@ class UIManager:
           
         elif self.edit_button.is_hovered(mouse_pos):
             vis.edit_mode = not vis.edit_mode
-            vis.outline_color = GREEN if vis.edit_mode else BLACK
 
         elif vis.edit_mode:
             clicked_node = find_clicked_node(vis.root, mouse_pos)
@@ -25,15 +26,17 @@ class UIManager:
                     clicked_node.fill(1)
                     generate_coordinates(clicked_node)   
                 else:
+                    clicked_node.editing = True
                     vis.currently_editing_node = True
                     self.node_edit_box = Node_Edit_Button(vis.font, clicked_node)  
-                        
-
+    
+    
+    
 
     def draw_objects(self, screen, root, edit_mode, currently_editing_node):
-        outline_color = GREEN if edit_mode else BLACK
+        outline_color = DARK_GREY if currently_editing_node else GREEN if edit_mode else BLACK
         self.draw_edges(screen, root, edit_mode, outline_color)
-        self.draw_nodes(screen, root, edit_mode, outline_color)
+        self.draw_nodes(screen, root, edit_mode, outline_color, currently_editing_node)
         self.edit_button.draw(screen, outline_color)
         
         if currently_editing_node:
@@ -49,27 +52,11 @@ class UIManager:
         _draw_edge(node.right)
     
     
-    def draw_nodes(self, screen, node, edit_mode, border_color) -> None:
-        mouse_pos = pygame.mouse.get_pos()
-        hovered = is_hovered(node, mouse_pos)
-        
-        if not node.is_empty or (node.is_empty and edit_mode):
-            if node.is_empty:
-                node_color = SHADED_GREEN if edit_mode and hovered else LIGHT_GREEN
-                text = "+"
-            else:
-                node_color = SHADED_WHITE if edit_mode and hovered else WHITE
-                text = "?" if edit_mode and hovered else str(node.val)
-
-            pygame.draw.circle(screen, node_color, node.coordinate, NODE_SIZE)
-            pygame.draw.circle(screen, border_color, node.coordinate, NODE_SIZE, NODE_BORDER_WIDTH)
-
-            text_surface = self.font.render(text, True, BLACK)
-            text_rect = text_surface.get_rect(center=node.coordinate)
-            screen.blit(text_surface, text_rect)
-        
+    def draw_nodes(self, screen, node, edit_mode, border_color, frozen) -> None:
+        drawn_node = NodeVisualizer(node, self.font, border_color, edit_mode, frozen)
+        drawn_node.draw(screen)
         if node.left:
-            self.draw_nodes(screen, node.left, edit_mode, border_color)
+            self.draw_nodes(screen, node.left, edit_mode, border_color, frozen)
         if node.right:
-            self.draw_nodes(screen, node.right, edit_mode, border_color)
+            self.draw_nodes(screen, node.right, edit_mode, border_color, frozen)
             
