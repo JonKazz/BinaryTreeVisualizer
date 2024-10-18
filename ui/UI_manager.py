@@ -8,6 +8,9 @@ class UIManager:
         self.edit_button = Edit_Button(self.font)
 
     def handle_click(self, mouse_pos, vis):
+        if vis.currently_editing_node:
+            self.draw_node_edit_box
+        
         if self.edit_button.is_hovered(mouse_pos):
             vis.edit_mode = not vis.edit_mode
             vis.outline_color = GREEN if vis.edit_mode else BLACK
