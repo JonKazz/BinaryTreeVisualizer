@@ -1,9 +1,7 @@
 import pygame
 import sys
-from ui.edit_button import Edit_Button
-from nodes.node_visualization import NodeVisualizer
 from constants import *
-from nodes.node_operations import *
+from nodes.node_operations import setup_nodes
 from ui.UI_manager import UIManager
 
 class Visualizer:
@@ -41,7 +39,7 @@ class Visualizer:
         while self.running:
             self.handle_events()
             self.screen.fill(BACKGROUND_COLOR)
-            self.ui_manager.draw_objects(self.screen, self.root, self.edit_mode)
+            self.ui_manager.draw_objects(self.screen, self.root, self.edit_mode, self.currently_editing_node)
             pygame.display.flip()
 
 

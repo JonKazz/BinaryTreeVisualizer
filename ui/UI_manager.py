@@ -1,17 +1,20 @@
 from constants import *
 from ui.edit_button import Edit_Button
+from ui.node_edit_box import Node_Edit_Button
 from nodes.node_operations import *
 
 class UIManager:
     def __init__(self, font):
         self.font = font
         self.edit_button = Edit_Button(self.font)
+        self.node_edit_box = None
 
     def handle_click(self, mouse_pos, vis):
         if vis.currently_editing_node:
-            self.draw_node_edit_box
-        
-        if self.edit_button.is_hovered(mouse_pos):
+            if self.node_edit_box.is_hovered(mouse_pos, self.node_edit_box.increment_box):
+                vis.currently_editing_node = False
+          
+        elif self.edit_button.is_hovered(mouse_pos):
             vis.edit_mode = not vis.edit_mode
             vis.outline_color = GREEN if vis.edit_mode else BLACK
 
@@ -22,14 +25,19 @@ class UIManager:
                     clicked_node.fill(1)
                     generate_coordinates(clicked_node)   
                 else:
-                    vis.currently_editing_node = True      
+                    vis.currently_editing_node = True
+                    self.node_edit_box = Node_Edit_Button(vis.font, clicked_node)  
+                        
 
 
-    def draw_objects(self, screen, root, edit_mode):
+    def draw_objects(self, screen, root, edit_mode, currently_editing_node):
         outline_color = GREEN if edit_mode else BLACK
         self.draw_edges(screen, root, edit_mode, outline_color)
         self.draw_nodes(screen, root, edit_mode, outline_color)
         self.edit_button.draw(screen, outline_color)
+        
+        if currently_editing_node:
+            self.node_edit_box.draw(screen)
     
     
     def draw_edges(self, screen, node, edit_mode, outline_color):
