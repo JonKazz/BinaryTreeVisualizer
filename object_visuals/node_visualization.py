@@ -3,7 +3,7 @@ from constants import *
 from nodes.node_operations import is_hovered
 
 
-class NodeVisualizer:
+class NodeVisualization:
     def __init__(self, node, font, border_color, edit_mode, frozen):
         self.node = node
         self.size = NODE_SIZE
@@ -28,10 +28,12 @@ class NodeVisualizer:
 
         return WHITE
 
+
     def get_border_color(self):
         if self.node.editing:
             return GREEN
         return self.border_color
+
 
     def get_text(self, hovered):
         if self.node.is_empty:
@@ -41,9 +43,11 @@ class NodeVisualizer:
         else:
             return str(self.node.val)
      
+     
     def draw(self, screen) -> None:
         mouse_pos = pygame.mouse.get_pos()
         hovered = is_hovered(self.node, mouse_pos)
+        
         node_color = self.get_node_color(hovered)
         border_color = self.get_border_color()
         text = self.get_text(hovered)

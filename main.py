@@ -5,18 +5,18 @@ from nodes.node_operations import setup_nodes
 from ui.UI_manager import UIManager
 
 class Visualizer:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, root_node):
+        self.root_node = root_node
         self.edit_mode = False
-        self.currently_editing_node = False
-
+        self.frozen_mode = False
+        print(pygame.font.get_fonts())
         pygame.init()
         self.font = pygame.font.SysFont('arial', FONT_SIZE)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Binary Tree Visualizer")
         self.running = True
         
-        self.ui_manager = UIManager(self.font)
+        self.ui_manager = UIManager(self.screen, self.font, self.root_node, self.edit_mode, self.frozen_mode)
             
 
     def handle_events(self):
@@ -26,7 +26,7 @@ class Visualizer:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self.ui_manager.handle_click(mouse_pos, self)           
+                self.ui_manager.handle_click(mouse_pos)           
             
              
     def quit_application(self):
@@ -39,13 +39,13 @@ class Visualizer:
         while self.running:
             self.handle_events()
             self.screen.fill(BACKGROUND_COLOR)
-            self.ui_manager.draw_objects(self.screen, self.root, self.edit_mode, self.currently_editing_node)
+            self.ui_manager.draw_objects()
             pygame.display.flip()
 
 
 def main():
-    root = setup_nodes()
-    visualizer = Visualizer(root)
+    root_node = setup_nodes()
+    visualizer = Visualizer(root_node)
     visualizer.run()
 
 if __name__ == "__main__":

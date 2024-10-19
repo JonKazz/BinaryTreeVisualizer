@@ -12,8 +12,7 @@ class Edit_Button:
         
         self.text = "EDIT"
         self.font = font
-        self.default_color = WHITE
-        self.hover_color = SHADED_WHITE
+        self.frozen_mode = False
 
 
     def is_hovered(self, mouse_pos):
@@ -22,10 +21,7 @@ class Edit_Button:
 
     def draw(self, screen, outline_color):
         mouse_pos = pygame.mouse.get_pos()
-        if self.is_hovered(mouse_pos):
-            button_color = self.hover_color
-        else:
-            button_color = self.default_color
+        button_color = GREY if self.frozen_mode else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
 
         pygame.draw.rect(screen, button_color, self.rect)
         pygame.draw.rect(screen, outline_color, self.rect, 3)

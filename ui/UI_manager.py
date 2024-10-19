@@ -1,62 +1,50 @@
 import pygame
 from constants import *
-from ui.edit_button import Edit_Button
-from ui.node_edit_box import Node_Edit_Button
-from ui.node_visualization import NodeVisualizer
 from nodes.node_operations import *
+from ui.UI_draw_objects import ObjectsVisualization
+from object_visuals.edit_button import Edit_Button
+from object_visuals.node_edit_box import Node_Edit_Button
 
 class UIManager:
-    def __init__(self, font):
+    def __init__(self, screen, font, root_node, edit_mode, frozen_mode):
+        self.screen = screen
         self.font = font
-        self.edit_button = Edit_Button(self.font)
-        self.node_edit_box = None
-
-    def handle_click(self, mouse_pos, vis):
-        if vis.currently_editing_node:
-            if self.node_edit_box.is_hovered(mouse_pos, self.node_edit_box.increment_box):
-                vis.currently_editing_node = False
-          
-        elif self.edit_button.is_hovered(mouse_pos):
-            vis.edit_mode = not vis.edit_mode
-
-        elif vis.edit_mode:
-            clicked_node = find_clicked_node(vis.root, mouse_pos)
-            if clicked_node is not None:
-                if clicked_node.is_empty:
-                    clicked_node.fill(1)
-                    generate_coordinates(clicked_node)   
-                else:
-                    clicked_node.editing = True
-                    vis.currently_editing_node = True
-                    self.node_edit_box = Node_Edit_Button(vis.font, clicked_node)  
-    
-    
-    
-
-    def draw_objects(self, screen, root, edit_mode, currently_editing_node):
-        outline_color = DARK_GREY if currently_editing_node else GREEN if edit_mode else BLACK
-        self.draw_edges(screen, root, edit_mode, outline_color)
-        self.draw_nodes(screen, root, edit_mode, outline_color, currently_editing_node)
-        self.edit_button.draw(screen, outline_color)
+        self.root_node = root_node
+        self.edit_mode = edit_mode
+        self.frozen_mode = frozen_mode
         
-        if currently_editing_node:
-            self.node_edit_box.draw(screen)
+        self.object_visualizer = ObjectsVisualization(screen, font, root_node, edit_mode, frozen_mode)
+
+
+    def handle_click(self, mouse_pos):
+        clicked_object = self.object_visualizer.find_clicked_object(mouse_pos)
+        
+        if self.frozen_mode:
+            if type(clicked_object) is Node_Edit_Button:
+                clicked_object.node.editing = False
+                self.frozen_mode = False
+          
+        elif type(clicked_object) is Edit_Button:
+            self.edit_mode = not self.edit_mode
+
+        elif type(clicked_object) is Node and self.edit_mode:
+            if clicked_object.is_empty:
+                clicked_object.fill(1)
+                generate_coordinates(clicked_object)   
+            else:
+                self.object_visualizer.create_node_edit_box(clicked_object)
+                clicked_object.editing = True
+                self.frozen_mode = True        
+        
+        self.update_object_visualizer()
     
     
-    def draw_edges(self, screen, node, edit_mode, outline_color):
-        def _draw_edge(child):
-            if child is not None and (not child.is_empty or edit_mode):
-                pygame.draw.line(screen, outline_color, child.coordinate, node.coordinate, NODE_BORDER_WIDTH)
-                self.draw_edges(screen, child, edit_mode, outline_color)
-        _draw_edge(node.left)
-        _draw_edge(node.right)
+    def update_object_visualizer(self):
+        self.object_visualizer.edit_mode = self.edit_mode
+        self.object_visualizer.frozen_mode = self.frozen_mode
+        
+    def draw_objects(self):
+        self.object_visualizer.draw_objects()
     
+
     
-    def draw_nodes(self, screen, node, edit_mode, border_color, frozen) -> None:
-        drawn_node = NodeVisualizer(node, self.font, border_color, edit_mode, frozen)
-        drawn_node.draw(screen)
-        if node.left:
-            self.draw_nodes(screen, node.left, edit_mode, border_color, frozen)
-        if node.right:
-            self.draw_nodes(screen, node.right, edit_mode, border_color, frozen)
-            

@@ -32,24 +32,24 @@ def generate_coordinates(node: Node) -> None:
 
 
 def is_hovered(node, mouse_pos) -> bool:
-        distance = math.sqrt((mouse_pos[0] - node.coordinate[0]) ** 2 + (mouse_pos[1] - node.coordinate[1]) ** 2)
-        return distance <= NODE_SIZE
+    distance = math.sqrt((mouse_pos[0] - node.coordinate[0]) ** 2 + (mouse_pos[1] - node.coordinate[1]) ** 2)
+    return distance <= NODE_SIZE
 
 
 def find_clicked_node(node, mouse_pos) -> Node:
-        if is_hovered(node, mouse_pos):
-            return node
+    if is_hovered(node, mouse_pos):
+        return node
+    
+    if node.left:
+        checked_node = find_clicked_node(node.left, mouse_pos)
+        if checked_node:
+            return checked_node
+    if node.right:
+        checked_node = find_clicked_node(node.right, mouse_pos)
+        if checked_node:
+            return checked_node
         
-        if node.left:
-            checked_node = find_clicked_node(node.left, mouse_pos)
-            if checked_node:
-                return checked_node
-        if node.right:
-            checked_node = find_clicked_node(node.right, mouse_pos)
-            if checked_node:
-                return checked_node
-            
-        return None
+    return None
             
     
 
