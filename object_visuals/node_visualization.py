@@ -6,10 +6,8 @@ from nodes.node_operations import is_hovered
 class NodeVisualization:
     def __init__(self, node, font, border_color, edit_mode, frozen):
         self.node = node
-        self.size = NODE_SIZE
         self.font = font
         self.border_color = border_color
-        self.border_width = NODE_BORDER_WIDTH
         self.edit_mode = edit_mode
         self.frozen = frozen
     
@@ -53,8 +51,8 @@ class NodeVisualization:
         text = self.get_text(hovered)
 
         if not self.node.is_empty or (self.node.is_empty and self.edit_mode):
-            pygame.draw.circle(screen, node_color, self.node.coordinate, self.size)
-            pygame.draw.circle(screen, border_color, self.node.coordinate, self.size, self.border_width)
+            pygame.draw.circle(screen, node_color, self.node.coordinate, NODE_SIZE)
+            pygame.draw.circle(screen, border_color, self.node.coordinate, NODE_SIZE, NODE_BORDER_WIDTH)
 
             text_surface = self.font.render(text, True, BLACK)
             text_rect = text_surface.get_rect(center=self.node.coordinate)

@@ -20,14 +20,13 @@ class UIManager:
         clicked_object = self.object_visualizer.find_clicked_object(mouse_pos)
         
         if self.frozen_mode:
-            if type(clicked_object) is Node_Edit_Button:
-                clicked_object.node.editing = False
+            if isinstance(clicked_object, Node_Edit_Button):
                 self.frozen_mode = False
           
-        elif type(clicked_object) is Edit_Button:
+        elif isinstance(clicked_object, Edit_Button):
             self.edit_mode = not self.edit_mode
 
-        elif type(clicked_object) is Node and self.edit_mode:
+        elif isinstance(clicked_object, Node) and self.edit_mode:
             if clicked_object.is_empty:
                 clicked_object.fill(1)
                 generate_coordinates(clicked_object)   

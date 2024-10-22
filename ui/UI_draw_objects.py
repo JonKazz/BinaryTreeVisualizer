@@ -14,17 +14,18 @@ class ObjectsVisualization:
         self.edit_mode = edit_mode
         self.frozen_mode = frozen_mode  
         self.edit_button = Edit_Button(self.font) 
+        self.node_edit_button = None
     
     def draw_objects(self):
         self.outline_color = DARK_GREY if self.frozen_mode else GREEN if self.edit_mode else BLACK
         self.draw_edges(self.root_node)
-        if self.frozen_mode: self.draw_node_edit_box()
         self.draw_nodes(self.root_node)
         self.draw_edit_button()
+        if self.frozen_mode: self.draw_node_edit_box()
     
     
     def create_node_edit_box(self, node):
-        self.node_edit_button = Node_Edit_Button(node)
+        self.node_edit_button = Node_Edit_Button(node, self.font)
     
     def draw_node_edit_box(self):
         self.node_edit_button.draw(self.screen)
@@ -53,11 +54,12 @@ class ObjectsVisualization:
                 
     
     def find_clicked_object(self, mouse_pos):
-        node = find_clicked_node(self.root_node, mouse_pos)
-        if node:
-            return node
-        elif self.edit_button.is_hovered(mouse_pos):
-            return self.edit_button
-        elif self.frozen_mode and self.node_edit_button.is_hovered(mouse_pos):
+        if self.frozen_mode and self.node_edit_button.is_hovered(mouse_pos):
             return self.node_edit_button
+        
+        if self.edit_button.is_hovered(mouse_pos):
+            return self.edit_button
+
+        return find_clicked_node(self.root_node, mouse_pos)
+    
         

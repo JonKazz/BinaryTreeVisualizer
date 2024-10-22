@@ -15,4 +15,11 @@ class Node:
         if tree_level < 5:
             self.left = Node(None)
             self.right = Node(None)
+    
+    def clear(self):
+        self.val = None
+        self.left = None
+        self.right = None
+        self.is_empty = True
+        self.editing = False
 

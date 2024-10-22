@@ -9,7 +9,7 @@ class Visualizer:
         self.root_node = root_node
         self.edit_mode = False
         self.frozen_mode = False
-        print(pygame.font.get_fonts())
+
         pygame.init()
         self.font = pygame.font.SysFont('arial', FONT_SIZE)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
