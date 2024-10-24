@@ -1,4 +1,5 @@
 import math
+from collections import deque
 from constants import *
 from nodes.node import Node
 
@@ -8,7 +9,6 @@ def setup_nodes() -> Node:
     root.fill(1)
     generate_coordinates(root)
     return root
-
 
 def generate_coordinates(node: Node) -> None:
     if node:
@@ -20,15 +20,32 @@ def generate_coordinates(node: Node) -> None:
         
         if node.left:
             child_hc = parent_hc + 160
-            child_wc = parent_wc - (300 / 2 ** tree_level)
+            child_wc = parent_wc + (300 / 2 ** tree_level)
             node.left.coordinate = (child_wc, child_hc)
             generate_coordinates(node.left)
             
         if node.right:
             child_hc = parent_hc + 160
-            child_wc = parent_wc + (300 / 2 ** tree_level)
+            child_wc = parent_wc - (300 / 2 ** tree_level)
             node.right.coordinate = (child_wc, child_hc)
             generate_coordinates(node.right)
+
+
+def fill_tree(root: Node) -> None:
+    if root.is_empty: return None
+    value = root.val
+    q = deque([root])
+    
+    while q:
+        node = q.popleft()
+        node.fill(value)
+        generate_coordinates(node)
+        value += 1
+        
+        if node.left:
+            q.append(node.left)
+        if node.right:
+            q.append(node.right)
 
 
 def is_hovered(node, mouse_pos) -> bool:
@@ -50,6 +67,30 @@ def find_clicked_node(node, mouse_pos) -> Node:
             return checked_node
         
     return None
-            
+
+
+def preorder_traversal(root) -> list[Node]:
+    nodes = []
+    
+    q = deque()
+    q.append(root)
+    while q:
+        node = q.pop()
+        nodes.append(node)
+        if node.left:
+            q.append(node.left)
+        if node.right:
+            q.append(node.right)
+    
+    return nodes
+
+
+def unhighlight_nodes(node) -> None:
+    if node:
+        node.highlighted = False
+        if node.left:
+            unhighlight_nodes(node.left)
+        if node.right:
+            unhighlight_nodes(node.right)
     
 

@@ -4,8 +4,10 @@ class Node:
         self.left = None
         self.right = None
         self.coordinate = None
+        
         self.is_empty = True if val is None else False
         self.editing = False
+        self.highlighted = False
         
     def fill(self, val):
         self.val = val

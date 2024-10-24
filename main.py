@@ -7,8 +7,6 @@ from ui.UI_manager import UIManager
 class Visualizer:
     def __init__(self, root_node):
         self.root_node = root_node
-        self.edit_mode = False
-        self.frozen_mode = False
 
         pygame.init()
         self.font = pygame.font.SysFont('arial', FONT_SIZE)
@@ -16,7 +14,7 @@ class Visualizer:
         pygame.display.set_caption("Binary Tree Visualizer")
         self.running = True
         
-        self.ui_manager = UIManager(self.screen, self.font, self.root_node, self.edit_mode, self.frozen_mode)
+        self.ui_manager = UIManager(self.screen, self.font, self.root_node)
             
 
     def handle_events(self):

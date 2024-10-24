@@ -13,6 +13,9 @@ class NodeVisualization:
     
     
     def get_node_color(self, hovered):
+        if self.node.highlighted:
+            return LIGHT_RED
+        
         if self.frozen:
             if self.node.editing:
                 return LIGHT_GREEN
@@ -28,6 +31,8 @@ class NodeVisualization:
 
 
     def get_border_color(self):
+        if self.node.highlighted:
+            return RED
         if self.node.editing:
             return GREEN
         return self.border_color
@@ -42,7 +47,22 @@ class NodeVisualization:
             return str(self.node.val)
      
      
-    def draw(self, screen) -> None:
+     
+    def draw_left_edge(self, screen):
+        border_color = self.get_border_color()
+        left_node = self.node.left
+        if left_node and (not left_node.is_empty or (left_node.is_empty and self.edit_mode)):
+            pygame.draw.line(screen, border_color, self.node.coordinate, left_node.coordinate, NODE_BORDER_WIDTH)
+     
+     
+    def draw_right_edge(self, screen):
+        border_color = self.get_border_color()
+        right_node = self.node.right
+        if right_node and (not right_node.is_empty or (right_node.is_empty and self.edit_mode)):
+            pygame.draw.line(screen, border_color, self.node.coordinate, right_node.coordinate, NODE_BORDER_WIDTH)
+        
+        
+    def draw_node(self, screen) -> None:
         mouse_pos = pygame.mouse.get_pos()
         hovered = is_hovered(self.node, mouse_pos)
         
@@ -57,6 +77,9 @@ class NodeVisualization:
             text_surface = self.font.render(text, True, BLACK)
             text_rect = text_surface.get_rect(center=self.node.coordinate)
             screen.blit(text_surface, text_rect)
+    
+    
+
 
 
     

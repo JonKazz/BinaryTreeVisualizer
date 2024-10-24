@@ -1,19 +1,18 @@
 from constants import *
 import pygame
 
-class Edit_Button:
-    def __init__(self, font):
+class Fill_Button:
+    def __init__(self):
         x_pos = SCREEN_WIDTH - PADDING - 150
-        y_pos = PADDING
-        height = 80
-        width = 150
+        y_pos = PADDING + 90
+        height = 50
+        width = 70
         
         self.rect = pygame.Rect(x_pos, y_pos, width, height)
         
-        self.text = "EDIT"
-        self.font = font
+        self.text = "FILL"
+        self.font = pygame.font.SysFont('arial', FONT_SIZE-15)
         self.frozen_mode = False
-        self.traversal_mode = False
 
 
     def is_hovered(self, mouse_pos):
@@ -22,7 +21,7 @@ class Edit_Button:
 
     def draw(self, screen, outline_color):
         mouse_pos = pygame.mouse.get_pos()
-        button_color = GREY if self.frozen_mode or self.traversal_mode else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
+        button_color = GREY if self.frozen_mode else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
 
         pygame.draw.rect(screen, button_color, self.rect)
         pygame.draw.rect(screen, outline_color, self.rect, 3)
