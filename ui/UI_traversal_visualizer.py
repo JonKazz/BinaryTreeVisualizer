@@ -1,4 +1,5 @@
 from nodes.node_operations import preorder_traversal, unhighlight_nodes
+from object_visuals.node_visualization import NodeVisualization
 from constants import *
 
 class TraversalVisualizer():

@@ -1,4 +1,5 @@
 from constants import *
+from ui.mode_manager import ModeManager
 import pygame
 
 class Edit_Button:
@@ -12,8 +13,7 @@ class Edit_Button:
         
         self.text = "EDIT"
         self.font = font
-        self.frozen_mode = False
-        self.traversal_mode = False
+        self.mode = ModeManager()
 
 
     def is_hovered(self, mouse_pos):
@@ -22,7 +22,7 @@ class Edit_Button:
 
     def draw(self, screen, outline_color):
         mouse_pos = pygame.mouse.get_pos()
-        button_color = GREY if self.frozen_mode or self.traversal_mode else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
+        button_color = GREY if self.mode == "frozen" or self.mode == "traversal" else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
 
         pygame.draw.rect(screen, button_color, self.rect)
         pygame.draw.rect(screen, outline_color, self.rect, 3)

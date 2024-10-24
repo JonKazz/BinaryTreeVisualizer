@@ -20,19 +20,19 @@ def generate_coordinates(node: Node) -> None:
         
         if node.left:
             child_hc = parent_hc + 160
-            child_wc = parent_wc + (300 / 2 ** tree_level)
+            child_wc = parent_wc - (300 / 2 ** tree_level)
             node.left.coordinate = (child_wc, child_hc)
             generate_coordinates(node.left)
             
         if node.right:
             child_hc = parent_hc + 160
-            child_wc = parent_wc - (300 / 2 ** tree_level)
+            child_wc = parent_wc + (300 / 2 ** tree_level)
             node.right.coordinate = (child_wc, child_hc)
             generate_coordinates(node.right)
 
 
 def fill_tree(root: Node) -> None:
-    if root.is_empty: return None
+    if root.is_empty: root.fill(1)
     value = root.val
     q = deque([root])
     
@@ -68,7 +68,16 @@ def find_clicked_node(node, mouse_pos) -> Node:
         
     return None
 
-
+def unhighlight_nodes(node) -> None:
+    if node:
+        node.highlighted = False
+        if node.left:
+            unhighlight_nodes(node.left)
+        if node.right:
+            unhighlight_nodes(node.right)
+            
+            
+            
 def preorder_traversal(root) -> list[Node]:
     nodes = []
     
@@ -77,20 +86,33 @@ def preorder_traversal(root) -> list[Node]:
     while q:
         node = q.pop()
         nodes.append(node)
-        if node.left:
-            q.append(node.left)
-        if node.right:
+        if node.right and not node.right.is_empty:
             q.append(node.right)
-    
+        if node.left and not node.left.is_empty:
+            q.append(node.left)
+                
     return nodes
 
 
-def unhighlight_nodes(node) -> None:
-    if node:
-        node.highlighted = False
-        if node.left:
-            unhighlight_nodes(node.left)
-        if node.right:
-            unhighlight_nodes(node.right)
+
+def preorder_traversal_test(root) -> list[Node]:
+    nodes = []
+    
+    q = deque()
+    q.append(root)
+    while q:
+        node = q.pop()
+        nodes.append(node)
+        if node.right and not node.right.is_empty:
+            q.append(node.right)
+        if node.left and not node.left.is_empty:
+            q.append(node.left)
+                
+    return nodes
+
+
+
+
+
     
 

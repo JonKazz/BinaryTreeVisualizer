@@ -1,4 +1,5 @@
 from constants import *
+from ui.mode_manager import ModeManager
 import pygame
 
 class Traversal_Button:
@@ -9,17 +10,15 @@ class Traversal_Button:
         width = 150
         
         self.rect = pygame.Rect(x_pos, y_pos, width, height)
-        
         self.font = self.font = pygame.font.SysFont('arial', FONT_SIZE-10)
-        self.frozen_mode = False
-        self.traversal_mode = False
+        self.mode = ModeManager()
 
 
     def is_hovered(self, mouse_pos):
         return self.rect.collidepoint(mouse_pos)
 
     def get_text(self):
-        if self.traversal_mode:
+        if self.mode == "traversal":
             return "CLEAR"
         else:
             return "TRAVERSE"
@@ -27,7 +26,7 @@ class Traversal_Button:
     def draw(self, screen, outline_color):
         text = self.get_text()
         mouse_pos = pygame.mouse.get_pos()
-        button_color = GREY if self.frozen_mode else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
+        button_color = GREY if self.mode == "frozen" else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
 
         pygame.draw.rect(screen, button_color, self.rect)
         pygame.draw.rect(screen, outline_color, self.rect, 3)
