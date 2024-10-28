@@ -99,8 +99,6 @@ class Node_Edit_Button:
         self.draw_node()
     
     
-    
-    
     def is_hovered(self, mouse_pos):
         if self.save_box.collidepoint(mouse_pos):
             self.node.editing = False
@@ -114,6 +112,7 @@ class Node_Edit_Button:
         if self.triangle_is_hovered(mouse_pos, self.decrement_box):
             if self.node.val > 0:
                 self.node.val -= 1
+    
     
     def triangle_is_hovered(self, mouse_pos, triangle):
         def area(x1, y1, x2, y2, x3, y3):

@@ -6,6 +6,7 @@ class EdgeVisualization():
         self.mode = mode
         self.parent_coord = parent.coordinate
         self.child_coord = self.generate_child_coordinate(child)
+        self.highlighted = False
     
     def generate_child_coordinate(self, node):
         if not node:
@@ -16,8 +17,6 @@ class EdgeVisualization():
     def get_color(self):
         if self.mode == "edit":
             return GREEN
-        elif self.mode == "traversal":
-            return RED
         return BLACK
     
     def draw(self, screen):

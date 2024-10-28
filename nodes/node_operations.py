@@ -68,47 +68,17 @@ def find_clicked_node(node, mouse_pos) -> Node:
         
     return None
 
-def unhighlight_nodes(node) -> None:
-    if node:
-        node.highlighted = False
-        if node.left:
-            unhighlight_nodes(node.left)
-        if node.right:
-            unhighlight_nodes(node.right)
+
             
             
-            
-def preorder_traversal(root) -> list[Node]:
-    nodes = []
-    
-    q = deque()
-    q.append(root)
-    while q:
-        node = q.pop()
-        nodes.append(node)
-        if node.right and not node.right.is_empty:
-            q.append(node.right)
-        if node.left and not node.left.is_empty:
-            q.append(node.left)
-                
-    return nodes
 
 
 
-def preorder_traversal_test(root) -> list[Node]:
-    nodes = []
-    
-    q = deque()
-    q.append(root)
-    while q:
-        node = q.pop()
-        nodes.append(node)
-        if node.right and not node.right.is_empty:
-            q.append(node.right)
-        if node.left and not node.left.is_empty:
-            q.append(node.left)
-                
-    return nodes
+
+
+
+
+
 
 
 

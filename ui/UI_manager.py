@@ -14,15 +14,10 @@ class UIManager:
         self.screen = screen
         self.font = font
         self.root_node = root_node
-        
         self.mode = ModeManager()
         
-        self.edit_mode = False
-        self.frozen_mode = False
-        self.traversal_mode = False
-        
         self.object_visualizer = ObjectsVisualization(screen, font, root_node)
-        self.traversal_visualizer = TraversalVisualizer(root_node)
+        self.traversal_visualizer = TraversalVisualizer(screen, font, root_node)
 
 
     def handle_click(self, mouse_pos):
@@ -38,12 +33,11 @@ class UIManager:
                 self.mode.set_mode("view")
         
         elif self.mode == "view" and isinstance(clicked_object, Traversal_Button):
-            self.traversal_visualizer.create_nodes()
-            self.mode.set_mode("traversal")
+                self.traversal_visualizer.create_nodes()
+                self.mode.set_mode("traversal")
         
         elif isinstance(clicked_object, Edit_Button):
             self.mode.toggle_mode("edit")
-            
             
         elif self.mode == "edit":
             if isinstance(clicked_object, Node):
