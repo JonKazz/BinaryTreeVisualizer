@@ -2,4 +2,4 @@
 
 A visual application to create, edit, and traverse binary trees. Made using pygame.
 
-![Binary Tree Visualizer Demo](assets/btv_demo1.gif)
+![Binary Tree Visualizer Demo](assets/btv-demo.gif)
