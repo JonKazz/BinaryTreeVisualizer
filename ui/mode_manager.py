@@ -4,6 +4,7 @@ class ModeManager():
         self.edit_mode = False
         self.frozen_mode = False
         self.traversal_mode = False
+        self.traversal_pick_mode = False
     
     
     def get_mode(self) -> str:
@@ -15,6 +16,8 @@ class ModeManager():
             return "frozen"
         elif self.traversal_mode:
             return "traversal"
+        elif self.traversal_pick_mode:
+            return "traversal_pick"
         else:
             raise ValueError("No mode detected.")
         
@@ -24,6 +27,7 @@ class ModeManager():
         self.edit_mode = False
         self.frozen_mode = False
         self.traversal_mode = False
+        self.traversal_pick_mode = False
         
         if mode_name == "view":
             self.view_mode = True
@@ -33,6 +37,8 @@ class ModeManager():
             self.frozen_mode = True
         elif mode_name == "traversal":
             self.traversal_mode = True
+        elif mode_name == "traversal_pick":
+            self.traversal_pick_mode = True
         else:
             raise ValueError(f"Unknown mode: {mode_name}")
 
@@ -66,3 +72,5 @@ class ModeManager():
             return "traversal"
         elif self.view_mode:
             return "view"
+        elif self.traversal_pick_mode:
+            return "traversal_pick"

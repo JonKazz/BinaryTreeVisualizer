@@ -1,7 +1,6 @@
 import pygame
 from constants import *
-from nodes.traversal_operations import *
-from nodes.node import Node
+from nodes import *
 
 class TraversalVisualizer():
     def __init__(self, screen, font, root_node):
@@ -13,8 +12,14 @@ class TraversalVisualizer():
         self.screen = screen
         self.line_progress = {}
         
-    def create_nodes(self):
-        self.traversal_order = inorder_traversal(self.root_node)
+    def create_nodes(self, traversal_type):
+        if traversal_type == "postorder":
+            self.traversal_order = postorder_traversal(self.root_node)
+        elif traversal_type == "preorder":
+            self.traversal_order = preorder_traversal(self.root_node)
+        elif traversal_type == "inorder":
+            self.traversal_order = inorder_traversal(self.root_node)
+        
         self.current_index = 0
         self.line_progress.clear()
     
@@ -53,17 +58,29 @@ class TraversalVisualizer():
                 self.draw_node(element)
 
 
-
-
+    def calculate_coordinates(self, p_coord, c_coord):
+        x1, y1 = p_coord
+        x2, y2 = c_coord
+        dx, dy = x2 - x1, y2 - y1
+        length = (dx**2 + dy**2)**0.5
+        unit_dx, unit_dy = dx / length, dy / length
+    
+        start = (x1 + unit_dx * NODE_SIZE, y1 + unit_dy * NODE_SIZE)
+        end = (x2 - unit_dx * NODE_SIZE, y2 - unit_dy * NODE_SIZE)
+        return (start, end)
 
 
     def draw_line(self, element):
         if isinstance(element[0], tuple):
             for parent, child in element:
-                self.draw_growing_line(parent.coordinate, child.coordinate, speed=1)
+                parent_coord, child_coord = self.calculate_coordinates(parent.coordinate, child.coordinate)
+                
+                self.draw_growing_line(parent_coord, child_coord, speed=1)
+        
         else:
             parent, child = element
-            self.draw_growing_line(parent.coordinate, child.coordinate, speed=1)
+            parent_coord, child_coord = self.calculate_coordinates(parent.coordinate, child.coordinate)
+            self.draw_growing_line(parent_coord, child_coord, speed=1)
 
 
     def draw_node(self, element):

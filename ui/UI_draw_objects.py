@@ -1,12 +1,9 @@
 from constants import *
-from ui.mode_manager import ModeManager
-from object_visuals.edit_button import Edit_Button
-from object_visuals.node_edit_box import Node_Edit_Button
-from object_visuals.node_visualization import NodeVisualization
-from object_visuals.traversal_button import Traversal_Button
-from object_visuals.fill_tree_button import Fill_Button
-from object_visuals.edge_visualization import EdgeVisualization
 from nodes.node_operations import find_clicked_node
+
+from ui.mode_manager import ModeManager
+from object_visuals import Node_Edit_Button, NodeVisualization, EdgeVisualization
+from object_visuals.buttons import *
 
 class ObjectsVisualization:
     def __init__(self, screen, font, root_node):
@@ -16,6 +13,10 @@ class ObjectsVisualization:
         self.mode = ModeManager()
         
         self.traverse_button = Traversal_Button() 
+        self.preorder_button = Preorder_Button()
+        self.postorder_button = Postorder_Button()
+        self.inorder_button = Inorder_Button()
+        
         self.edit_button = Edit_Button(self.font) 
         self.fill_tree_button = Fill_Button()
         self.node_edit_button = None
@@ -31,6 +32,10 @@ class ObjectsVisualization:
         self.update_buttons()
         self.edit_button.draw(self.screen, self.outline_color)
         if self.mode == "view" or self.mode == "traversal": self.traverse_button.draw(self.screen, self.outline_color)
+        if self.mode == "traversal_pick": 
+            self.preorder_button.draw(self.screen, self.outline_color)
+            self.postorder_button.draw(self.screen, self.outline_color)
+            self.inorder_button.draw(self.screen, self.outline_color)
         if self.mode == "edit": self.fill_tree_button.draw(self.screen, self.outline_color)
         if self.mode == "frozen": self.node_edit_button.draw(self.screen)
     
@@ -73,4 +78,12 @@ class ObjectsVisualization:
             self.traverse_button.mode.toggle_mode("traversal")               
             return self.traverse_button
         
+        if self.mode == "traversal_pick":
+            if self.postorder_button.is_hovered(mouse_pos):
+                return self.postorder_button
+            if self.preorder_button.is_hovered(mouse_pos):
+                return self.preorder_button
+            if self.inorder_button.is_hovered(mouse_pos):
+                return self.inorder_button
+             
         return find_clicked_node(self.root_node, mouse_pos)

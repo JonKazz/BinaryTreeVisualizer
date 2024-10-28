@@ -15,6 +15,13 @@ class Edit_Button:
         self.font = font
         self.mode = ModeManager()
 
+    def get_color(self, mouse_pos):
+        if self.mode == "frozen" or self.mode == "traversal" or self.mode == "traversal_pick":
+            return GREY
+        elif self.is_hovered(mouse_pos):
+            return SHADED_WHITE
+        else:
+            return WHITE
 
     def is_hovered(self, mouse_pos):
         return self.rect.collidepoint(mouse_pos)
@@ -22,7 +29,7 @@ class Edit_Button:
 
     def draw(self, screen, outline_color):
         mouse_pos = pygame.mouse.get_pos()
-        button_color = GREY if self.mode == "frozen" or self.mode == "traversal" else SHADED_WHITE if self.is_hovered(mouse_pos) else WHITE
+        button_color = self.get_color(mouse_pos)
 
         pygame.draw.rect(screen, button_color, self.rect)
         pygame.draw.rect(screen, outline_color, self.rect, 3)

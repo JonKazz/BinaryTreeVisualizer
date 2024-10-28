@@ -1,13 +1,10 @@
-import time
 from constants import *
-from nodes.node_operations import *
+from nodes import *
 from ui.UI_draw_objects import ObjectsVisualization
 from ui.UI_traversal_visualizer import TraversalVisualizer
 from ui.mode_manager import ModeManager
-from object_visuals.edit_button import Edit_Button
-from object_visuals.node_edit_box import Node_Edit_Button
-from object_visuals.fill_tree_button import Fill_Button
-from object_visuals.traversal_button import Traversal_Button
+from object_visuals import Node_Edit_Button
+from object_visuals.buttons import *
 
 class UIManager:
     def __init__(self, screen, font, root_node):
@@ -27,14 +24,24 @@ class UIManager:
             if isinstance(clicked_object, Node_Edit_Button):
                 self.mode.set_mode("edit")
         
+        elif self.mode == "traversal_pick":
+            if isinstance(clicked_object, Postorder_Button):
+                self.traversal_visualizer.create_nodes("postorder")
+                self.mode.set_mode("traversal")
+            elif isinstance(clicked_object, Preorder_Button):
+                self.traversal_visualizer.create_nodes("preorder")
+                self.mode.set_mode("traversal")
+            elif isinstance(clicked_object, Inorder_Button):
+                self.traversal_visualizer.create_nodes("inorder")
+                self.mode.set_mode("traversal")
+                
         elif self.mode == "traversal":
             if isinstance(clicked_object, Traversal_Button):
                 self.traversal_visualizer.clear_traversal()
                 self.mode.set_mode("view")
         
         elif self.mode == "view" and isinstance(clicked_object, Traversal_Button):
-                self.traversal_visualizer.create_nodes()
-                self.mode.set_mode("traversal")
+            self.mode.set_mode("traversal_pick")
         
         elif isinstance(clicked_object, Edit_Button):
             self.mode.toggle_mode("edit")
